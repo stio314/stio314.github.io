@@ -219,11 +219,10 @@ canvasDynamic.addEventListener('touchmove', e => {
 
             Mouse.x = touches[i].clientX - rect.left
             Mouse.y = touches[i].clientY - rect.top
-
+    
+            handleMouseMove(e)
         }
     }
-    
-    handleMouseMove(e)
 })
 canvasDynamic.addEventListener('touchstart', e => {
     e.preventDefault()
@@ -235,20 +234,28 @@ canvasDynamic.addEventListener('touchstart', e => {
 
             Mouse.x = touches[i].clientX - rect.left
             Mouse.y = touches[i].clientY - rect.top
+
+            handleMouseDown(e)
         }
     }
-
-    handleMouseDown(e)
 })
 canvasDynamic.addEventListener('touchcancel', e => {
     e.preventDefault()
-
-    handleMouseUp(e)
+    
+    for (let i=0; i<touches.length; i++) {
+        if (touches[i].identifier===0) {                        
+            handleMouseUp(e)
+        }
+    }
 })
 canvasDynamic.addEventListener('touchend', e => {
     e.preventDefault()
-
-    handleMouseUp(e)
+    
+    for (let i=0; i<touches.length; i++) {
+        if (touches[i].identifier===0) {                        
+            handleMouseUp(e)
+        }
+    }
 })
 
 $('#art_brush_size').addEventListener('input', () => {
