@@ -241,6 +241,7 @@ canvasDynamic.addEventListener('touchstart', e => {
 })
 canvasDynamic.addEventListener('touchcancel', e => {
     e.preventDefault()
+    const touches = e.changedTouches
     
     for (let i=0; i<touches.length; i++) {
         if (touches[i].identifier===0) {                        
@@ -250,6 +251,7 @@ canvasDynamic.addEventListener('touchcancel', e => {
 })
 canvasDynamic.addEventListener('touchend', e => {
     e.preventDefault()
+    const touches = e.changedTouches
     
     for (let i=0; i<touches.length; i++) {
         if (touches[i].identifier===0) {                        
