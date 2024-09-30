@@ -121,7 +121,7 @@
                     const data = {'question': question}
                     const req = new XMLHttpRequest()
 
-                    req.open('POST', 'http://localhost:5000/send_question')
+                    req.open('POST', 'https://stio-webhook-server.onrender.com/send_question')
                     req.setRequestHeader('Content-Type', 'application/json')
 
                     req.onreadystatechange = () => {
@@ -145,7 +145,7 @@
                 const data = {'image': image}
                 const req = new XMLHttpRequest()
 
-                req.open('POST', 'http://localhost:5000/send_art')
+                req.open('POST', 'https://stio-webhook-server.onrender.com/send_art')
                 req.setRequestHeader('Content-Type', 'application/json')
 
                 req.onreadystatechange = () => {
