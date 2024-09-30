@@ -59,6 +59,11 @@
                 align-self: flex-start;
 
                 border: 1px solid #aaa;
+
+                cursor: pointer;
+            }
+            #secondary_color:hover {
+                border-color: #000;
             }
 
             #canvas_container {
@@ -81,19 +86,36 @@
                 margin-top: 5px;
                 width: 602px;
             }
+
+            #art_toolbar>button  {
+                width: 50px;
+                height: 50px;
+                margin-right: 5px;
+            }
+
+            button svg {
+                width: 2em;
+                height: 2em;
+                vertical-align: -0.125em;
+            }
         </style>
     </head>
     <body>
         <h1>Draww me something</h1>
 
         <div id="art_toolbar">
-            <input type="color" id="art_color" />
-            <div id="secondary_color"></div>
+            <input type="color" id="art_color" title="change current color" />
+            <div id="secondary_color" title="switch to secondary color (X)"></div>
             <div id="art_brush_size_con">
                 <input type="range" value="4" min="1" max="99" id="art_brush_size" />
                 <span id="art_brush_size_display">size: 4</span>
             </div>
-            <p id="art_color_tip">x to switch to secondary color</p>
+            <button id="art_brush_size_down" title="decrease brush size ([)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/></svg></button>
+            <button id="art_brush_size_up" title="increase brush size (])"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg></button>
+
+            <button id="art_undo" title="undo (CTRL+Z)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M48.5 224L40 224c-13.3 0-24-10.7-24-24L16 72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L98.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L185 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8L48.5 224z"/></svg></button>
+            <button id="art_redo" disabled title="redo (CTRL+Y / CTRL+SHIFT+Z)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M463.5 224l8.5 0c13.3 0 24-10.7 24-24l0-128c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8l119.5 0z"/></svg></button>
+            <!-- <p id="art_color_tip">x to switch to secondary color</p> -->
         </div>
         <br>
         <div id="canvas_container">
@@ -104,7 +126,7 @@
 
         <hr>
         
-        <h1>Sendd me something funny</h1>
+        <h1>Asks me something</h1>
         <input type="text" id="question"> <button id="submit_question">submit</button>
 
         <script src="draw.js"></script>
@@ -112,12 +134,13 @@
             document.querySelector('#submit_question').addEventListener('click', () => {
                 const question = document.querySelector('#question').value
 
-                document.querySelector('#submit_question').setAttribute('disabled', 'true')
-                document.querySelector('#submit_question').innerText = '...'
-
                 if (!question) {
                     alert('please type something in the box thanks')
+                    return
                 } else {
+                    document.querySelector('#submit_question').setAttribute('disabled', 'true')
+                    document.querySelector('#submit_question').innerText = 'sending... (may take a while i have no money)'
+
                     const data = {'question': question}
                     const req = new XMLHttpRequest()
 
@@ -126,7 +149,12 @@
 
                     req.onreadystatechange = () => {
                         if (req.readyState === 4) {
-                            document.querySelector('#submit_question').innerText = 'thankks'
+                            if (req.status === 0 || (req.status >= 200 && req.status < 400)) {
+                                document.querySelector('#submit_question').innerText = 'thankks'
+                            } else {
+                                document.querySelector('#submit_question').removeAttribute('disabled')
+                                document.querySelector('#submit_question').innerText = 'failed to submit'
+                            }
 
                             console.log(req.response)
                         }
@@ -140,7 +168,7 @@
                 const image = document.querySelector('#canvas_static').toDataURL('image/png').split(',')[1]
 
                 document.querySelector('#submit_art').setAttribute('disabled', 'true')
-                document.querySelector('#submit_art').innerText = '...'
+                document.querySelector('#submit_art').innerText = 'sending... (may take a while i have no money)'
 
                 const data = {'image': image}
                 const req = new XMLHttpRequest()
@@ -149,12 +177,17 @@
                 req.setRequestHeader('Content-Type', 'application/json')
 
                 req.onreadystatechange = () => {
-                    if (req.readyState === 4) {
-                        document.querySelector('#submit_art').innerText = 'thankks'
+                        if (req.readyState === 4) {
+                            if (req.status === 0 || (req.status >= 200 && req.status < 400)) {
+                                document.querySelector('#submit_art').innerText = 'thankks'
+                            } else {
+                                document.querySelector('#submit_art').removeAttribute('disabled')
+                                document.querySelector('#submit_art').innerText = 'failed to submit'
+                            }
 
-                        console.log(req.response)
+                            console.log(req.response)
+                        }
                     }
-                }
 
                 req.send(JSON.stringify(data))
             })
