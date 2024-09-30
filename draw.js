@@ -13,7 +13,7 @@ const Mouse = {x: 0, y: 0, drawing: false}
 const Keys = {Control: false}
 
 const lines = []
-const redoQueue = []
+let redoQueue = []
 
 const currentBrush = { 
     brush: [
@@ -97,12 +97,51 @@ function updateStatic() {
     }
 }
 
+function updateRedoButton() {
+    if (redoQueue.length !== 0) {
+        $('#art_redo').removeAttribute('disabled')
+    } else {
+        $('#art_redo').setAttribute('disabled', 'true')        
+    }
+}
+
+function switchBrush() {
+    currentBrush.current = 1-currentBrush.current
+
+    setColor( brush().color )
+    setSize( brush().size )
+}
+
+function brushSizeDown() {
+    if (brush().size > 100) {
+        setSize( brush().size - 10 )
+    } else if (brush().size > 10) {
+        setSize( brush().size - 5 )            
+    } else {
+        setSize( brush().size - 1 )
+    }
+
+    updateDynamic()
+}
+function brushSizeUp() {
+    if (brush().size >= 100) {
+        setSize( brush().size + 10 )
+    } else if (brush().size >= 10) {
+        setSize( brush().size + 5 )            
+    } else {
+        setSize( brush().size + 1 )
+    }
+    
+    updateDynamic()
+}
+
 function undo() {
     if (lines.length !== 0) {
         redoQueue.push( lines.pop() )
         Mouse.drawing = false
     }
 
+    updateRedoButton()
     updateStatic()
 }
 function redo() {
@@ -111,12 +150,20 @@ function redo() {
         Mouse.drawing = false
     }
 
+    if (redoQueue.length !== 0) {
+        $('#art_redo').removeAttribute('disabled')
+    } else {
+        $('#art_redo').setAttribute('disabled', 'true')        
+    }
+
+    updateRedoButton()
     updateStatic()
 }
 
-document.addEventListener('mousedown', e => {
+function handleMouseDown(e) {
     if (e.target.getAttribute('id') === 'canvas_dynamic') {
         lines.push([brush().color, brush().size, Mouse.x, Mouse.y])
+        redoQueue = []
 
         ctxStatic.strokeStyle = brush().color
         ctxStatic.lineWidth = brush().size
@@ -128,7 +175,27 @@ document.addEventListener('mousedown', e => {
         Mouse.drawing = true
     }
 
+    updateRedoButton()
     updateDynamic()
+}
+function handleMouseMove(e) {
+    if (Mouse.drawing && lines.length !== 0) {
+        ctxStatic.lineTo(Mouse.x, Mouse.y)
+        lines[lines.length-1].push(Mouse.x, Mouse.y)
+    }
+
+    updateDynamic()
+}
+function handleMouseUp(e) {    
+    if (Mouse.drawing) ctxStatic.stroke()     
+
+    Mouse.drawing = false
+
+    updateDynamic()
+}
+
+document.addEventListener('mousedown', e => {
+    handleMouseDown(e)
 })
 document.addEventListener('mousemove', e => {
     let rect = canvasStatic.getBoundingClientRect()
@@ -136,19 +203,52 @@ document.addEventListener('mousemove', e => {
     Mouse.x = e.clientX - rect.left
     Mouse.y = e.clientY - rect.top
 
-    if (Mouse.drawing && lines.length !== 0) {
-        ctxStatic.lineTo(Mouse.x, Mouse.y)
-        lines[lines.length-1].push(Mouse.x, Mouse.y)
-    }
-
-    updateDynamic()
+    handleMouseMove(e)
 })
 document.addEventListener('mouseup', e => {    
-    if (Mouse.drawing) ctxStatic.stroke()     
+    handleMouseUp(e)
+})
 
-    Mouse.drawing = false
+canvasDynamic.addEventListener('touchmove', e => {
+    e.preventDefault()
+    const touches = e.changedTouches
 
-    updateDynamic()
+    for (let i=0; i<touches.length; i++) {
+        if (touches[i].identifier===0) {
+            let rect = canvasStatic.getBoundingClientRect()
+
+            Mouse.x = touches[i].clientX - rect.left
+            Mouse.y = touches[i].clientY - rect.top
+
+        }
+    }
+    
+    handleMouseMove(e)
+})
+canvasDynamic.addEventListener('touchstart', e => {
+    e.preventDefault()
+    const touches = e.changedTouches
+
+    for (let i=0; i<touches.length; i++) {
+        if (touches[i].identifier===0) {
+            let rect = canvasStatic.getBoundingClientRect()
+
+            Mouse.x = touches[i].clientX - rect.left
+            Mouse.y = touches[i].clientY - rect.top
+        }
+    }
+
+    handleMouseDown(e)
+})
+canvasDynamic.addEventListener('touchcancel', e => {
+    e.preventDefault()
+
+    handleMouseUp(e)
+})
+canvasDynamic.addEventListener('touchend', e => {
+    e.preventDefault()
+
+    handleMouseUp(e)
 })
 
 $('#art_brush_size').addEventListener('input', () => {
@@ -174,33 +274,14 @@ document.addEventListener('keydown', e => {
     }
 
     if (e.key === 'x') {
-        currentBrush.current = 1-currentBrush.current
-
-        setColor( brush().color )
-        setSize( brush().size )
+        switchBrush()
     }
 
     if (e.key === '[') {
-        if (brush().size > 100) {
-            setSize( brush().size - 10 )
-        } else if (brush().size > 10) {
-            setSize( brush().size - 5 )            
-        } else {
-            setSize( brush().size - 1 )
-        }
-
-        updateDynamic()
+        brushSizeDown()
     }
     if (e.key === ']') {
-        if (brush().size >= 100) {
-            setSize( brush().size + 10 )
-        } else if (brush().size >= 10) {
-            setSize( brush().size + 5 )            
-        } else {
-            setSize( brush().size + 1 )
-        }
-        
-        updateDynamic()
+        brushSizeUp()
     }
 })
 document.addEventListener('keyup', e => {
@@ -210,4 +291,22 @@ document.addEventListener('keyup', e => {
     if (e.key === 'Shift') {
         Keys.Shift = false
     }
+})
+
+$('#art_brush_size_down').addEventListener('click', () => {
+    brushSizeDown()
+})
+$('#art_brush_size_up').addEventListener('click', () => {
+    brushSizeUp()
+})
+
+$('#art_undo').addEventListener('click', () => {
+    undo()
+})
+$('#art_redo').addEventListener('click', () => {
+    redo()
+})
+
+$('#secondary_color').addEventListener('click', () => {
+    switchBrush()
 })
