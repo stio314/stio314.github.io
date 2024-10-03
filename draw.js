@@ -160,8 +160,8 @@ function redo() {
     updateStatic()
 }
 
-function handleMouseDown(e) {
-    if (e.target.getAttribute('id') === 'canvas_dynamic' && e.button === 0) {
+function handleMouseDown(e, touch) {
+    if (e.target.getAttribute('id') === 'canvas_dynamic' && e.button === 0 || touch) {
         lines.push([brush().color, brush().size, Mouse.x, Mouse.y])
         redoQueue = []
 
@@ -186,8 +186,8 @@ function handleMouseMove(e) {
 
     updateDynamic()
 }
-function handleMouseUp(e) {    
-    if (e.button === 0) {
+function handleMouseUp(e, touch) {    
+    if (e.button === 0 || touch) {
         if (Mouse.drawing) ctxStatic.stroke()     
 
         Mouse.drawing = false
@@ -241,7 +241,7 @@ canvasDynamic.addEventListener('touchstart', e => {
             Mouse.x = touches[i].clientX - rect.left
             Mouse.y = touches[i].clientY - rect.top
 
-            handleMouseDown(e)
+            handleMouseDown(e, true)
         }
     }
 })
@@ -251,7 +251,7 @@ canvasDynamic.addEventListener('touchcancel', e => {
     
     for (let i=0; i<touches.length; i++) {
         if (touches[i].identifier===0) {                        
-            handleMouseUp(e)
+            handleMouseUp(e, true)
         }
     }
 })
@@ -261,7 +261,7 @@ canvasDynamic.addEventListener('touchend', e => {
     
     for (let i=0; i<touches.length; i++) {
         if (touches[i].identifier===0) {                        
-            handleMouseUp(e)
+            handleMouseUp(e, true)
         }
     }
 })
