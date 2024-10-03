@@ -161,7 +161,7 @@ function redo() {
 }
 
 function handleMouseDown(e) {
-    if (e.target.getAttribute('id') === 'canvas_dynamic') {
+    if (e.target.getAttribute('id') === 'canvas_dynamic' && e.button === 0) {
         lines.push([brush().color, brush().size, Mouse.x, Mouse.y])
         redoQueue = []
 
@@ -173,10 +173,10 @@ function handleMouseDown(e) {
         ctxStatic.lineTo(Mouse.x, Mouse.y)
 
         Mouse.drawing = true
-    }
 
-    updateRedoButton()
-    updateDynamic()
+        updateRedoButton()
+        updateDynamic()
+    }
 }
 function handleMouseMove(e) {
     if (Mouse.drawing && lines.length !== 0) {
@@ -187,14 +187,16 @@ function handleMouseMove(e) {
     updateDynamic()
 }
 function handleMouseUp(e) {    
-    if (Mouse.drawing) ctxStatic.stroke()     
+    if (e.button === 0) {
+        if (Mouse.drawing) ctxStatic.stroke()     
 
-    Mouse.drawing = false
+        Mouse.drawing = false
 
-    updateDynamic()
+        updateDynamic()
+    }
 }
 
-document.addEventListener('mousedown', e => {
+document.addEventListener('mousedown', e => {    
     handleMouseDown(e)
 })
 document.addEventListener('mousemove', e => {
@@ -205,8 +207,12 @@ document.addEventListener('mousemove', e => {
 
     handleMouseMove(e)
 })
-document.addEventListener('mouseup', e => {    
+document.addEventListener('mouseup', e => {   
     handleMouseUp(e)
+})
+
+canvasDynamic.addEventListener('contextmenu', e => {
+    e.preventDefault()
 })
 
 canvasDynamic.addEventListener('touchmove', e => {
