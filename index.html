@@ -13,7 +13,8 @@
 
             #question {
                 padding: 10px;
-                width: 580px;
+                width: 578px;
+                margin-top: 5px;
             }
             button {
                 padding: 10px;
@@ -82,7 +83,7 @@
                 left: 0;
             }
 
-            #submit_art {
+            #submit {
                 margin-top: 5px;
                 width: 602px;
             }
@@ -118,16 +119,16 @@
             <!-- <p id="art_color_tip">x to switch to secondary color</p> -->
         </div>
         <br>
-        <div id="canvas_container">
+        <div id="canvas_container" data-empty="true">
             <canvas id="canvas_static" width="600" height="400"></canvas>
             <canvas id="canvas_dynamic" width="600" height="400"></canvas>
         </div>
-        <button id="submit_art">submit art</button>
 
-        <hr>
-        
-        <h1>Asks me something</h1>
-        <input type="text" id="question"> <button id="submit_question">submit</button>
+        <input type="text" placeholder="optional text to send with the art" id="question">
+
+        <br>
+
+        <button id="submit">submit</button>
 
         <script src="draw.js"></script>
         <script src="post.js"></script>
