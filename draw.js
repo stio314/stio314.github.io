@@ -343,3 +343,7 @@ $('#art_redo').addEventListener('click', () => {
 $('#secondary_color').addEventListener('click', () => {
     switchBrush()
 })
+
+window.onbeforeunload = function(e) {
+    return 'prevent reload'
+}
