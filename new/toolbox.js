@@ -111,6 +111,7 @@ class ToolboxKeyboardHandler {
 
     handleKeyDown(event) {
         // if (event.code != 'Tab' && event.code != 'Enter') event.preventDefault()
+        if (document.activeElement.classList.contains('submission-text')) return
         if (this.reservedCodes.includes(event.code) || this.reservedKeys.includes(event.key)) event.preventDefault()
 
         if (event.key === 'Control') this.ctrlDown = true
