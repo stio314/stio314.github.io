@@ -314,7 +314,9 @@ export class DrawingCanvas {
         const queue = []
         queue.push([x, y])
 
-        while (queue.length > 0) {
+        let iterations = 0
+
+        while (queue.length > 0 && iterations <= 600 * 400 * 4) {
             const [x, y] = queue.shift()
 
             if (
@@ -331,6 +333,8 @@ export class DrawingCanvas {
             queue.push([x - 1, y])
             queue.push([x, y + 1])
             queue.push([x, y - 1])
+
+            iterations += 4
         }
     }
 
