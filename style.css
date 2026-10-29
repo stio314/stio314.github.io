@@ -517,7 +517,7 @@ canvas {
     gap: 5px;
 }
 
-.help-modal-toolbox, .help-modal-controls {
+.help-modal-toolbox, .help-modal-controls, .help-modal-gallery {
     width: fit-content !important;
     padding: 5px;
 }

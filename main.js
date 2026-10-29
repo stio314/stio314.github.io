@@ -130,6 +130,10 @@ document.querySelector('.help-modal-controls').addEventListener('click', () => {
     helpModal.querySelectorAll('.page').forEach((el) => el.classList.add('hidden'))
     helpModal.querySelector('.page.controls').classList.remove('hidden')
 })
+document.querySelector('.help-modal-gallery').addEventListener('click', () => {
+    helpModal.querySelectorAll('.page').forEach((el) => el.classList.add('hidden'))
+    helpModal.querySelector('.page.gallery').classList.remove('hidden')
+})
 
 // submission
 setupSubmission(
