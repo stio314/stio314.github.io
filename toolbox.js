@@ -106,7 +106,7 @@ class ToolboxKeyboardHandler {
         window.addEventListener('keyup', (e) => this.handleKeyUp(e))
     }
 
-    reservedKeys = ['Control', 'Shift']
+    reservedKeys = ['Control', 'Shift', 'b', 'f', 'r', 'i', '[', ']', 'x', 'z', 'y', 'Z', '=', '-']
     reservedCodes = ['KeyB', 'KeyF', 'KeyR', 'KeyI', 'BracketLeft', 'BracketRight', 'KeyX', 'KeyZ', 'KeyY', 'Equal', 'Minus']
 
     handleKeyDown(event) {
@@ -114,37 +114,39 @@ class ToolboxKeyboardHandler {
         if (document.activeElement.classList.contains('submission-text')) return
         if (this.reservedCodes.includes(event.code) || this.reservedKeys.includes(event.key)) event.preventDefault()
 
+        console.log(event.key)
+
         if (event.key === 'Control') this.ctrlDown = true
         if (event.key === 'Shift') this.shiftDown = true
 
-        if (event.code === 'KeyB')  
+        if (event.key === 'b')  
             this.messageBroadcaster.notify(this, new Event('userChangedTool', { tool: 'brush' }))
-        if (event.code === 'KeyF')
+        if (event.key === 'f')
             this.messageBroadcaster.notify(this, new Event('userChangedTool', { tool: 'fill' }))
-        if (event.code === 'KeyR')
+        if (event.key === 'r')
             this.messageBroadcaster.notify(this, new Event('userChangedTool', { tool: 'replace' }))
-        if (event.code === 'KeyI')
+        if (event.key === 'i')
             this.messageBroadcaster.notify(this, new Event('userChangedTool', { tool: 'colorpicker' }))
 
-        if (event.code === 'BracketLeft')             
+        if (event.key === '[')             
             this.messageBroadcaster.notify(this, new Event('userRequestedBrushSizeSubtract', {}))
-        if (event.code === 'BracketRight')
+        if (event.key === ']')
             this.messageBroadcaster.notify(this, new Event('userRequestedBrushSizeAdd', {}))
 
-        if (event.code === 'KeyX')
+        if (event.key === 'x')
             this.messageBroadcaster.notify(this, new Event('userRequestedSwapColors', {}))
 
-        if (event.code === 'KeyZ' && this.ctrlDown && !this.shiftDown)
+        if (event.key === 'z' && this.ctrlDown)
             this.messageBroadcaster.notify(this, new Event('userRequestedUndo', {}))
         if (
-            event.code === 'KeyY' && this.ctrlDown ||
-            event.code === 'KeyZ' && this.ctrlDown && this.shiftDown
+            event.key === 'y' && this.ctrlDown ||
+            event.key === 'Z' && this.ctrlDown
         ) 
             this.messageBroadcaster.notify(this, new Event('userRequestedRedo', {}))
 
-        if (event.code === 'Equal')
+        if (event.key === '=')
             this.messageBroadcaster.notify(this, new Event('userRequestedZoomIn', {}))  
-        if (event.code === 'Minus')
+        if (event.key === '-')
             this.messageBroadcaster.notify(this, new Event('userRequestedZoomOut', {}))                
     }
     handleKeyUp(event) {
