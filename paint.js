@@ -221,8 +221,8 @@ export class Paint {
         })
         this.eventHandler.add('userRequestedBrushSizeAdd', () => {
             let step = 1
-            if (this.currentBrushSize > 10) step = 5
-            if (this.currentBrushSize > 50) step = 10
+            if (this.currentBrushSize >= 10) step = 5
+            if (this.currentBrushSize >= 50) step = 10
 
             this.currentBrushSize = Math.round(this.currentBrushSize / step) * step
             this.currentBrushSize = this.currentBrushSize + step
